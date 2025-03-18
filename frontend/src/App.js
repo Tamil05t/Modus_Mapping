@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { login, getCrimes } from "./api";
 import CrimeForm from "./components/CrimeForm";
-import GraphView from "./components/GraphView";
 import CrimeList from "./components/CrimeList";
 import Heatmap from "./components/Heatmap";
+import GraphView from "./components/GraphView";
 import "./styles.css";
 
 function App() {
@@ -11,29 +11,35 @@ function App() {
     const [token, setToken] = useState("");
     const [darkMode, setDarkMode] = useState(false);
 
-    // Toggle dark mode
-    const toggleDarkMode = () => {
-        setDarkMode((prevMode) => !prevMode);
-    };
+    // Dark mode toggle
+    const toggleDarkMode = () => setDarkMode((prev) => !prev);
 
     // Handle login
     const handleLogin = async () => {
-        const response = await login("admin", "admin");
-        if (response?.access_token) {
-            setToken(response.access_token);
+        try {
+            const response = await login("admin", "admin");
+            if (response?.access_token) {
+                setToken(response.access_token);
+            }
+        } catch (error) {
+            console.error("Login failed:", error);
         }
     };
 
-    // Fetch crimes after login
+    // Fetch crime data
     const fetchCrimes = async () => {
         if (token) {
-            const data = await getCrimes(token);
-            setCrimes(data);
+            try {
+                const data = await getCrimes(token);
+                setCrimes(data);
+            } catch (error) {
+                console.error("Failed to fetch crimes:", error);
+            }
         }
     };
 
     useEffect(() => {
-        fetchCrimes();
+        if (token) fetchCrimes();
     }, [token]);
 
     return (
