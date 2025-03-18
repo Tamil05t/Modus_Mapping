@@ -1,15 +1,20 @@
-# Use Python base image
+# Use an official Python runtime as a parent image
 FROM python:3.9-slim
 
-# Set the working directory
+# Set the working directory in the container
 WORKDIR /app
 
-# Install dependencies
+# Copy the requirements file into the container
 COPY requirements.txt .
+
+# Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the source code and test files
-COPY . .          # This ensures that the `/tests` folder is included
+# Copy the current directory contents into the container at /app
+COPY . .
 
-# Run unit tests before starting the app
-CMD ["sh", "-c", "pytest tests && uvicorn main:app --host 0.0.0.0 --port 8000"]
+# Expose port 8000 for the FastAPI app
+EXPOSE 8000
+
+# Command to run the FastAPI app
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
