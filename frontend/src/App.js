@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";  // 🛠️ Import useCallback
 import { login, getCrimes } from "./api";
 import CrimeForm from "./components/CrimeForm";
 import CrimeList from "./components/CrimeList";
@@ -26,8 +26,8 @@ function App() {
         }
     };
 
-    // Fetch crime data
-    const fetchCrimes = async () => {
+    // ✅ Memoize fetchCrimes using useCallback to prevent unnecessary re-renders
+    const fetchCrimes = useCallback(async () => {
         if (token) {
             try {
                 const data = await getCrimes(token);
@@ -36,11 +36,13 @@ function App() {
                 console.error("Failed to fetch crimes:", error);
             }
         }
-    };
+    }, [token]);  // Only recreate when token changes
 
     useEffect(() => {
-        if (token) fetchCrimes();
-    }, [token]);
+        if (token) {
+            fetchCrimes();
+        }
+    }, [token, fetchCrimes]);  // No more warning
 
     return (
         <div className={darkMode ? "dark-mode" : "light-mode"}>

@@ -5,6 +5,7 @@ uvicorn==0.27.0
 # Database
 neo4j==5.14.0
 sqlalchemy==2.0.23
+python-multipart==0.0.6
 
 # AI/ML Models
 transformers==4.35.2
