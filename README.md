@@ -26,7 +26,17 @@ Here’s the **rewritten and corrected installation instructions** with proper f
 
 ---
 
-## 🚀 **Installation Instructions**
+Here’s the **rewritten guide** formatted for a **GitHub README page**. You can copy and paste this directly into your `README.md` file:
+
+---
+
+# 🚀 ModusMapping - Crime Analysis Dashboard
+
+ModusMapping is an **offline-first crime analysis tool** powered by AI for crime summarization, modus operandi detection, and visualizations. It supports **offline data storage** and **synchronization with Neo4j** when online.
+
+---
+
+## 🛠️ Installation Instructions (Docker Only)
 
 ### ✅ **1. Clone the Repository**
 Clone the ModusMapping repository and navigate into the project directory:
@@ -37,34 +47,20 @@ cd Modus_Mapping
 
 ---
 
-### ✅ **2. Install Backend Dependencies**
-Navigate to the `backend` directory and install the required Python dependencies:
+### ✅ **2. Build and Run the Docker Containers**
+Run the following command to build the Docker images and start the containers:
 ```bash
-cd backend
-pip install -r requirements.txt
-```
-
----
-
-### ✅ **3. Install Frontend Dependencies**
-Navigate to the `frontend` directory and install the required Node.js dependencies:
-```bash
-cd ../frontend
-npm install
-```
-
----
-
-### ✅ **4. Run the App with Docker**
-Go back to the root directory and build/run the Docker containers:
-```bash
-cd ..
 docker-compose up --build
 ```
 
+This command will:
+1. Build the backend and frontend Docker images.
+2. Install all dependencies **inside the Docker containers** (no need to run `pip install` or `npm install` manually).
+3. Start the backend and frontend services.
+
 ---
 
-## 📊 **Usage**
+## 📊 Usage
 
 ### 🌟 **Frontend (Crime Dashboard)**
 Open the app in your browser:
@@ -92,25 +88,23 @@ http://localhost:8000/docs
 
 ---
 
-## 🔥 **Testing**
+## 🔥 Testing
 
 ### ✅ **Backend Unit Tests**
-Navigate to the `backend` directory and run the unit tests:
+To run the backend unit tests, execute the following command:
 ```bash
-cd backend
-pytest tests/
+docker-compose exec backend pytest tests/
 ```
 
 ### ✅ **Frontend Unit Tests**
-Navigate to the `frontend` directory and run the unit tests:
+To run the frontend unit tests, execute the following command:
 ```bash
-cd frontend
-npm test
+docker-compose exec frontend npm test
 ```
 
 ---
 
-## 🚀 **Deployment Instructions**
+## 🚀 Deployment Instructions
 
 ### **Build Docker Images**
 Build the Docker images for the backend and frontend:
@@ -130,20 +124,38 @@ docker-compose up
 
 ---
 
-### **Final Notes**
-- Ensure Docker is installed and running on your system.
-- If you encounter any issues, check the logs using:
-  ```bash
-  docker-compose logs
+## 🛠️ Troubleshooting
+
+### **Check Logs**
+If you encounter any issues, check the logs using:
+```bash
+docker-compose logs
+```
+
+### **Port Conflicts**
+Ensure ports `3000` (frontend) and `8000` (backend) are not already in use. You can change the ports in the `docker-compose.yml` file if needed.
+
+---
+
+## 🚀 Why This Works
+- The `Dockerfile` for the backend includes a step to install dependencies:
+  ```dockerfile
+  RUN pip install --no-cache-dir -r requirements.txt
   ```
+- The `Dockerfile` for the frontend includes a step to install dependencies:
+  ```dockerfile
+  RUN npm install
+  ```
+- Docker handles everything, so you don’t need to manually install dependencies or set up a virtual environment.
+
 ---
 
-### 🔥 **Contributing**
-Feel free to contribute by creating pull requests or opening issues.  
+## 📄 License
+This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
 
 ---
 
-### 🔥 **License**
-This project is licensed under the **MIT License**.
+## 🙌 Contributing
+Feel free to contribute by creating pull requests or opening issues.
 
 ---
