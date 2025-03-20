@@ -1,20 +1,24 @@
-# Use an official Python runtime as a parent image
+# Use Python 3.9 slim as base image
 FROM python:3.9-slim
 
-# Set the working directory in the container
+# Set working directory
 WORKDIR /app
 
-# Copy the requirements file into the container
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    libgl1 \
+    libglib2.0-0 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements and install Python dependencies
 COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Install dependencies and explicitly install uvicorn
-RUN pip install --no-cache-dir -r requirements.txt && pip install uvicorn
-
-# Copy the current directory contents into the container at /app
+# Copy the rest of the application code
 COPY . .
 
-# Expose port 8000 for the FastAPI app
+# Expose FastAPI port
 EXPOSE 8000
 
-# Command to run the FastAPI app
+# Command to run the backend server
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

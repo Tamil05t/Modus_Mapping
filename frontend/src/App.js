@@ -1,20 +1,23 @@
-import React, { useState, useEffect, useCallback } from "react";  // 🛠️ Import useCallback
+import React, { useState, useEffect, useCallback } from "react";
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import { login, getCrimes } from "./api";
 import CrimeForm from "./components/CrimeForm";
 import CrimeList from "./components/CrimeList";
 import Heatmap from "./components/Heatmap";
 import GraphView from "./components/GraphView";
+import Login from "./components/Login";
+import Dashboard from "./components/Dashboard";
 import "./styles.css";
 
 function App() {
-    const [crimes, setCrimes] = useState([]);
     const [token, setToken] = useState("");
+    const [crimes, setCrimes] = useState([]);
     const [darkMode, setDarkMode] = useState(false);
 
-    // Dark mode toggle
+    // ✅ Toggle dark mode
     const toggleDarkMode = () => setDarkMode((prev) => !prev);
 
-    // Handle login
+    // ✅ Handle login
     const handleLogin = async () => {
         try {
             const response = await login("admin", "admin");
@@ -26,7 +29,7 @@ function App() {
         }
     };
 
-    // ✅ Memoize fetchCrimes using useCallback to prevent unnecessary re-renders
+    // ✅ Memoized fetchCrimes to prevent unnecessary re-renders
     const fetchCrimes = useCallback(async () => {
         if (token) {
             try {
@@ -36,30 +39,52 @@ function App() {
                 console.error("Failed to fetch crimes:", error);
             }
         }
-    }, [token]);  // Only recreate when token changes
+    }, [token]);
 
     useEffect(() => {
         if (token) {
             fetchCrimes();
         }
-    }, [token, fetchCrimes]);  // No more warning
+    }, [token, fetchCrimes]);
 
     return (
-        <div className={darkMode ? "dark-mode" : "light-mode"}>
-            <header>
-                <button onClick={toggleDarkMode}>
-                    {darkMode ? "Light Mode" : "Dark Mode"}
-                </button>
-                <button onClick={handleLogin}>Login</button>
-            </header>
+        <Router>
+            <div className={darkMode ? "dark-mode" : "light-mode"}>
+                <header>
+                    <button onClick={toggleDarkMode}>
+                        {darkMode ? "Light Mode" : "Dark Mode"}
+                    </button>
+                    <button onClick={handleLogin}>Login</button>
+                </header>
 
-            <main>
-                <CrimeForm token={token} />
-                <CrimeList crimes={crimes} />
-                <Heatmap crimes={crimes} />
-                <GraphView crimes={crimes} />
-            </main>
-        </div>
+                <main>
+                    <Routes>
+                        <Route path="/" element={<Login setToken={setToken} />} />
+                        <Route 
+                            path="/dashboard" 
+                            element={token ? (
+                                <Dashboard crimes={crimes} />
+                            ) : (
+                                <Navigate to="/" />
+                            )} 
+                        />
+                        <Route 
+                            path="/crime" 
+                            element={token ? (
+                                <>
+                                    <CrimeForm token={token} />
+                                    <CrimeList crimes={crimes} />
+                                    <Heatmap crimes={crimes} />
+                                    <GraphView crimes={crimes} />
+                                </>
+                            ) : (
+                                <Navigate to="/" />
+                            )} 
+                        />
+                    </Routes>
+                </main>
+            </div>
+        </Router>
     );
 }
 
