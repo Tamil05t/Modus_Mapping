@@ -1,45 +1,35 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:8000";
+const API_URL = "http://localhost:8000";  // ✅ Backend URL
 
-// Generic function for handling API requests
-const apiRequest = async (method, url, data = {}, token = null) => {
-  try {
-    const headers = token ? { Authorization: `Bearer ${token}` } : {};
-    const response = await axios({
-      method,
-      url: `${API_URL}${url}`,
-      data,
-      headers,
-    });
-    return response.data;
-  } catch (error) {
-    console.error(`API ${method.toUpperCase()} request failed:`, error);
-    throw error;
-  }
-};
-
-// Login function
+// ✅ Login and get JWT token
 export const login = async (username, password) => {
-  return await apiRequest("post", "/token", { username, password });
+    const formData = new URLSearchParams();
+    formData.append("username", username);
+    formData.append("password", password);
+
+    try {
+        const response = await axios.post(`${API_URL}/token`, formData, {
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        });
+
+        return response.data;
+    } catch (error) {
+        console.error("Login error:", error);
+        throw error;
+    }
 };
 
-// Get crimes
+// ✅ Get crimes (with JWT token)
 export const getCrimes = async (token) => {
-  return await apiRequest("get", "/crimes", {}, token);
-};
+    try {
+        const response = await axios.get(`${API_URL}/crimes`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
 
-// Add a new crime
-export const addCrime = async (crime, token) => {
-  return await apiRequest("post", "/crimes", crime, token);
-};
-
-// Update an existing crime (optional)
-export const updateCrime = async (id, crime, token) => {
-  return await apiRequest("put", `/crimes/${id}`, crime, token);
-};
-
-// Delete a crime (optional)
-export const deleteCrime = async (id, token) => {
-  return await apiRequest("delete", `/crimes/${id}`, {}, token);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching crimes:", error);
+        throw error;
+    }
 };

@@ -1,5 +1,5 @@
-# Use Node.js 16 base image
-FROM node:16
+# Use Node.js image
+FROM node:18-alpine
 
 # Set working directory
 WORKDIR /app
@@ -8,14 +8,15 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
-# Copy the rest of the app
+# ✅ Install tailwindcss-animate and tailwind-merge inside Docker
+RUN npm install tailwindcss-animate tailwind-merge
+
+# Copy the application files
 COPY . .
 
-# Build the React app
+# Build the application
 RUN npm run build
 
-# Expose port 3000
-EXPOSE 3000
-
-# Command to run the React app
-CMD ["npm", "start"]
+# Serve the app
+EXPOSE 5173
+CMD ["npm", "run", "preview"]
